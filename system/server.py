@@ -5,14 +5,8 @@ import configparser
 
 import cherrypy
 
-conf = {
-    'global':{
-        # 'tools.json_in.on': True,
-        # 'tools.json_in.force': False,
-        'server.socket_host': 'hostname.hello.com',
-        'server.socket_port': 80
-    }
-}
+
+
 
 class SDCardDupe(object):
     @cherrypy.expose
@@ -76,7 +70,7 @@ class SDCardDupe(object):
         # get the path of images from the ini file
         config = configparser.ConfigParser()
         config.sections()
-        config.read('dupe_ui_server.ini')
+        config.read('server.ini')
 
         # get the list of images and check if valid img file
         for img_file in os.listdir(config['DuplicatorSettings']['ImagePath']):
@@ -101,4 +95,21 @@ class SDCardDupe(object):
 
 
 if __name__ == '__main__':
+    
+    # get host configs from server.ini
+    config_parse = configparser.ConfigParser()
+    config_parse.sections()
+    config_parse.read('server.ini')
+
+    conf = {
+        'global':{
+            # 'tools.json_in.on': True,
+            # 'tools.json_in.force': False,
+            'server.socket_host': config['DuplicatorSettings']['Host'],
+            'server.socket_port': config['DuplicatorSettings']['SocketPort']
+        }
+    }
+
+
+
     cherrypy.quickstart(SDCardDupe(), '/', conf)
