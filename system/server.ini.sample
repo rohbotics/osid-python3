@@ -3,3 +3,4 @@ ImagePath = /etc/osid/imgroot
 Host = localhost
 SocketPort = 80
 Logs = /var/osid
+SkeletonLocation = /home/pi/Documents/Skeleton/css/skeleton.css

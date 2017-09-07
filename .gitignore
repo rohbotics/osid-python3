@@ -102,3 +102,4 @@ ENV/
 
 # Project specific
 system/server.ini
+.remote-sync.json

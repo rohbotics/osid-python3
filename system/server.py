@@ -5,13 +5,23 @@ import configparser
 
 import cherrypy
 
-
-
-
 class SDCardDupe(object):
     @cherrypy.expose
     def index(self):
-        return open('../www/index.html', 'r').read()
+
+        # get host configs from server.ini
+        config_parse = configparser.ConfigParser()
+        config_parse.sections()
+        config_parse.read('server.ini')
+
+
+        html_string = open('../www/index.html', 'r').read()
+        html_string = html_string.replace("replacewithhostnamehere",config_parse['DuplicatorSettings']['Host'])
+
+        css_string = '<style>' + open(config_parse['DuplicatorSettings']['SkeletonLocation'], 'r').read() + '</style>'
+        html_string = html_string.replace("<style></style>",css_string)
+
+        return html_string
 
     @cherrypy.expose
     def posted(self,img_file,devices):
@@ -68,13 +78,13 @@ class SDCardDupe(object):
         list_images = []
 
         # get the path of images from the ini file
-        config = configparser.ConfigParser()
-        config.sections()
-        config.read('server.ini')
+        config_parse = configparser.ConfigParser()
+        config_parse.sections()
+        config_parse.read('server.ini')
 
         # get the list of images and check if valid img file
-        for img_file in os.listdir(config['DuplicatorSettings']['ImagePath']):
-            img_fullpath = os.path.join(config['DuplicatorSettings']['ImagePath'], img_file)
+        for img_file in os.listdir(config_parse['DuplicatorSettings']['ImagePath']):
+            img_fullpath = os.path.join(config_parse['DuplicatorSettings']['ImagePath'], img_file)
             if os.path.isfile(img_fullpath) and  os.path.splitext(img_file)[1] == '.img':
 
                 # get the size of the image
@@ -95,7 +105,7 @@ class SDCardDupe(object):
 
 
 if __name__ == '__main__':
-    
+
     # get host configs from server.ini
     config_parse = configparser.ConfigParser()
     config_parse.sections()
@@ -105,8 +115,8 @@ if __name__ == '__main__':
         'global':{
             # 'tools.json_in.on': True,
             # 'tools.json_in.force': False,
-            'server.socket_host': config['DuplicatorSettings']['Host'],
-            'server.socket_port': config['DuplicatorSettings']['SocketPort']
+            'server.socket_host': config_parse['DuplicatorSettings']['Host'],
+            'server.socket_port': int(config_parse['DuplicatorSettings']['SocketPort'])
         }
     }
 
