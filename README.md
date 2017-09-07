@@ -1,24 +1,84 @@
-osid
-====
+# Open Source Image Duplicator - Python3
 
-Open Source Image Duplicator is a simple web-based UI script that allows you to build a low cost Duplicator for USB Drives, SD Cards, or any other type of media that an image file can be written to using the dd command.
+OSID offers a UI (in the form of a webpage) to assist in duplicating SD cards from a Raspberry Pi.
 
-The components used on our test device were as follows:
 
-- 1 x Raspberry Pi Model B Revision 2
-- 1 x MicroUSB 1500mA Power Supply
-- 1 x Powered USB Hub with 10 ports/7 ports (see notes on hardware compatibility)
-- 10 x USB MicroSD Card Adaptors
+## Getting Started
 
-We recommend running Arch Linux ARM on the Raspberry Pi due to it being a simple lightweight linux distro that boots in around 10-20 seconds. We used Nginx with php-fpm as we found early on that Apache2 isn't particulary stable on the Raspberry Pi and consumes a large amount of resources when compared to Nginx.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-We will make an image file available of the complete Arch Linux ARM Image with OSID pre-installed (including step by step instructions) at http://www.rockandscissor.com/projects/osid upon completion of the project.
 
-This project was created by Matthew Stone (matt@rockandscissor.com) and released under the GNU GPLv3 license by Rock & Scissor Enterprises Limited.
+### Hardware
 
-If you have any questions/comments/feedback please contact Matthew on the email listed above and he'll do his best to help you out.
+- Raspberry Pi 2
+- 32 GB SD Card
+- Official Raspberry Pi Touch Display
+- Monoprice powered USB hubs (7 ports) (4 total)
+- Monoprice SD card readers (26 total, rpi2 will stall on any more)
 
-Hardware Compatibility
-======================
+### Prerequisites
 
-It's worth noting that our initial prototype kept causing kernal panics when we tried to write to the memory sticks. We narrowed this down to the TeckNet USB 3.0 10-port hub we had purchased not being compatible with the Raspberry Pi, whether this is because of it being a USB 3.0 hub (the RPi is USB 2.0), or more likely power issues backfeeding into the RPi, we decided to obtain a new hub based on the list confirmed to work with the RPi found at http://elinux.org/RPi_Powered_USB_Hubs.
+What things you need to install the software and how to install them
+
+```
+Python3
+Pip3
+cherrypy (through pip)
+```
+
+### Installing
+
+Instructions is for Raspbian since this is designed to be ran on a Raspberry Pi.
+
+Make sure you have python3 and pip3.
+
+```
+sudo apt-get install python3 python3-pip
+```
+
+and the CherryPy library.
+
+```
+sudo pip3 install cherrypy
+```
+
+Or
+
+```
+sudo pip3 install -r requirements.txt
+```
+
+To Do: Create an installation script to do it all.
+
+
+## Deployment
+
+Add the command to start when boot takes place
+
+```
+sudo python3 server.py
+```
+
+To Do: Elaborate and include in installation script.
+
+## Built With
+
+* [Skeleton](https://github.com/dhg/Skeleton) - CSS framework used to structure Web UI
+* [CherryPy](http://docs.cherrypy.org/en/latest/) - API Library for Python used to manage all actions
+* [rockandscissor/OSID](https://github.com/rockandscissor/osid) - Base Project originally written in PHP and Bash
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+
+## Authors
+
+* **Aaron Nguyen** - [aaronnguyen](https://github.com/aaronnguyen)
+
+## License
+
+This project is licensed under the GNU GPLv3 - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Thanks [PurpleBooth](https://gist.github.com/PurpleBooth) for the [Readme Template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
