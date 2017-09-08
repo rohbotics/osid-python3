@@ -58,21 +58,34 @@ class SDCardDupe(object):
         config_parse.sections()
         config_parse.read('server.ini')
 
-        dd_cmd = "sudo dcfldd bs=4M if=" + img_file + " of="
-        dd_cmd += " of=".join(devices)
-        dd_cmd += " sizeprobe=if statusinterval=1 2>&1 | tee "
-        dd_cmd += config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
-
         if not os.path.exists(config_parse['DuplicatorSettings']['Logs']):
             os.makedirs(config_parse['DuplicatorSettings']['Logs'])
 
-        subprocess.call(dd_cmd.split(" "))
+        # Run dd command and output status into the progress.info file
+        dd_cmd = "sudo dcfldd bs=4M if=" + img_file
+        dd_cmd += " of=" + " of=".join(devices)
+        dd_cmd += " sizeprobe=if statusinterval=1 2>&1 | sudo tee "
+        dd_cmd += config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
+        dd_cmd += " && echo \"osid_completed_task\" | sudo tee -a "
+        dd_cmd += config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
+
+        # Planned to run this in localhost only.
+        # But if there are plans to put this on the network, this is a security issue
+        # Just a workaround to get it running by subprocess
+        dd_cmd_file = config_parse['DuplicatorSettings']['Logs']+"/run.sh"
+        with open(dd_cmd_file,'w') as write_file:
+            write_file.write(dd_cmd)
+
+        subprocess.Popen(['sudo', 'bash', dd_cmd_file], close_fds=True)
 
         html_string = "Javascript to redirect to monitor here"
 
-        return html_string
+        return dd_cmd
+
+
 
     @cherrypy.expose
+    @cherrypy.tools.json_out()
     def getStatus(self):
         # get host configs from server.ini
         config_parse = configparser.ConfigParser()
@@ -82,11 +95,19 @@ class SDCardDupe(object):
 
         cat_cmd = "sudo cat "+ progress_file
         cat_output = str(subprocess.check_output(cat_cmd, shell=True).decode("utf-8"))
-        if "%" in cat_output:
-            percentage = cat_output.split(" of ")[-2].split("[")[-1]
+        if "records in" in cat_output and "records out" in cat_output and "osid_completed_task" in cat_output:
+            percentage = "100%"
+            time_remains = "00:00:00"
+        elif "%" in cat_output:
 
-        return percentage
+            current_line = cat_output.split("[")[-1]
+            percentage = current_line.split(" of ")[0]
+            time_remains = current_line.split("written. ")[1].split(" remaining.")[0]
 
+
+        # send the data as a json
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return json.dumps({'percentage':percentage,'time_remaining':time_remains})
 
 
     @cherrypy.expose
