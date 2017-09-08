@@ -9,14 +9,28 @@
 
     <script>
         function validateForm() {
+
+            var img_check = true
+            var alert_message = ""
             var img = document.forms["posted"]["img_file"].value;
-            var devices = document.forms["posted"]["devices"].value;
             if (img == "") {
-                alert("Image must be selected");
-                return false;
+                alert_message += "Error: Image must be selected.\n";
+                img_check = false;
             }
-            if (devices == "") {
-                alert("Devices must be selected");
+
+            var devs_check=false;
+        	var elements = document.getElementsByName("devices");
+        	for(var i=0; i < elements.length; i++){
+        		if(elements[i].checked) {
+        			devs_check = true;
+        		}
+        	}
+        	if (!devs_check) {
+        		alert_message += 'Error: Atleast one device needs to be selected.';
+        	}
+
+            if (!img_check || !devs_check){
+                alert(alert_message)
                 return false;
             }
 
