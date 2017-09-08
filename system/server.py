@@ -5,6 +5,8 @@ import configparser
 
 import cherrypy
 
+# Todo: too many config_parse blocks, create a function to easily call it
+
 class SDCardDupe(object):
     @cherrypy.expose
     def index(self):
@@ -14,7 +16,7 @@ class SDCardDupe(object):
         config_parse.sections()
         config_parse.read('server.ini')
 
-
+        # Get webpage, then replace needed parts here
         html_string = open('../www/index.html', 'r').read()
         html_string = html_string.replace("replacewithhostnamehere",config_parse['DuplicatorSettings']['Host'])
 
@@ -25,23 +27,66 @@ class SDCardDupe(object):
 
     @cherrypy.expose
     def posted(self,img_file,devices):
-        html_string = "<html><body>"
-        html_string += "Image: %s"%img_file
-        html_string += "</br>"
-        html_string += "Device: %s"%devices
-        html_string += "</br>"
-        html_string += "</br>"
-        html_string += "</body></html>"
+
+        # get all mounted items on the rpi
+        mounted_list = []
+        mounted_volumes_output = subprocess.check_output("mount", shell=True)
+        for mount_line in str(mounted_volumes_output.decode("utf-8")).split("\n"):
+            device_name = mount_line.split(" on ",1)[0]
+            if device_name not in mounted_list:
+                mounted_list.append(device_name)
+
+        # nested for loop, maybe we can optimize this later
+        for dev_path in devices:
+
+            reduced_list = []
+            for mounted_item in mounted_list:
+                # assumptions made, there will be no collisions, dont have to pop element
+                # but to reduce the cost of loop, will pop element by creating new list
+                if dev_path in mounted_item:
+                    umount_disk_cmd = "sudo umount %s"%mounted_item
+                    subprocess.call(umount_disk_cmd.split(" "))
+                else:
+                    reduced_list.append(mounted_item)
+
+            mounted_list = []
+            mounted_list.extend(reduced_list)
 
 
+        # get host configs from server.ini
+        config_parse = configparser.ConfigParser()
+        config_parse.sections()
+        config_parse.read('server.ini')
+
+        dd_cmd = "sudo dcfldd bs=4M if=" + img_file + " of="
+        dd_cmd += " of=".join(devices)
+        dd_cmd += " sizeprobe=if statusinterval=1 2>&1 | tee "
+        dd_cmd += config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
+
+        if not os.path.exists(config_parse['DuplicatorSettings']['Logs']):
+            os.makedirs(config_parse['DuplicatorSettings']['Logs'])
+
+        subprocess.call(dd_cmd.split(" "))
+
+        html_string = "Javascript to redirect to monitor here"
 
         return html_string
 
     @cherrypy.expose
     def getStatus(self):
-        status = "10%"
+        # get host configs from server.ini
+        config_parse = configparser.ConfigParser()
+        config_parse.sections()
+        config_parse.read('server.ini')
+        progress_file = config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
 
-        return status
+        cat_cmd = "sudo cat "+ progress_file
+        cat_output = str(subprocess.check_output(cat_cmd, shell=True).decode("utf-8"))
+        if "%" in cat_output:
+            percentage = cat_output.split(" of ")[-2].split("[")[-1]
+
+        return percentage
+
 
 
     @cherrypy.expose
