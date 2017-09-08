@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
+
 <head>
     <title>rPi-Dupe</title>
     <meta charset="utf-8">
@@ -18,18 +19,18 @@
                 img_check = false;
             }
 
-            var devs_check=false;
-        	var elements = document.getElementsByName("devices");
-        	for(var i=0; i < elements.length; i++){
-        		if(elements[i].checked) {
-        			devs_check = true;
-        		}
-        	}
-        	if (!devs_check) {
-        		alert_message += 'Error: Atleast one device needs to be selected.';
-        	}
+            var devs_check = false;
+            var elements = document.getElementsByName("devices");
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].checked) {
+                    devs_check = true;
+                }
+            }
+            if (!devs_check) {
+                alert_message += 'Error: Atleast one device needs to be selected.';
+            }
 
-            if (!img_check || !devs_check){
+            if (!img_check || !devs_check) {
                 alert(alert_message)
                 return false;
             }
@@ -37,6 +38,7 @@
         }
     </script>
 
+    <!-- Leave style tags here, CherryPy will replace with Skeleton CSS Template Code -->
     <style></style>
 
 </head>
@@ -44,119 +46,106 @@
 <body>
 
 
-	<div class="container">
-		<div class="sixteen columns osid_icon">
-			<h4>Open Source Image Duplicator v0.1.py</h4>
-			<hr />
-		</div>
-		<div class="sixteen columns">
-		</div>
+    <div class="container">
+        <div class="sixteen columns osid_icon">
+            <h4>Open Source Image Duplicator v0.1.py</h4>
+            <hr />
+        </div>
+        <div class="sixteen columns">
+        </div>
 
-    <form id = "posted" name="posted" method="POST" action="/posted" onsubmit="return validateForm()" >
+        <form id="posted" name="posted" method="POST" action="/posted" onsubmit="return validateForm()">
 
-		<div class="one-third column">
+            <div class="one-third column">
 
-  			<h4>Select an image:</h4>
-  			<p>
+                <h4>Select an image:</h4>
+                <p>
+                    <!-- Call api to get data, break down the response, and generate form -->
+                    <div id="images_info"></div>
+                    <script>
+                        var xmlhttp = new XMLHttpRequest();
+                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                        var url = "http://" + "replacewithhostnamehere" + "/getImages";
 
-            <div id="images_info"></div>
-            <script>
-                var xmlhttp = new XMLHttpRequest();
-                var url = "http://" + "replacewithhostnamehere" + "/getImages";
+                        xmlhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
 
-                xmlhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        // var myArr = JSON.parse(this.responseText);
-                        // create_images_buttons(myArr);
+                                // Have to parse it twice to get a Json Object
+                                var array = JSON.parse(JSON.parse(this.responseText))
+                                var img_html_buttons = ''
 
-                        // Have to parse it twice to get a Json Object
-                        var array = JSON.parse(JSON.parse(this.responseText))
-                        var img_html_buttons = ''
+                                if (array.length == 0) {
+                                    var img_html_buttons = 'No Images Found'
+                                } else {
+                                    for (var i = 0; i < array.length; i++) {
+                                        img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
+                                    }
 
-                        if(array.length == 0){
-                          var img_html_buttons = 'No Images Found'
-                        }
-                        else{
-                          for(var i=0; i<array.length;i++){
-                            img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="'
-                                        		+ array[i].fullpath
-                                            + '">'
-                                            + array[i].filename
-                                            + ' (' + array[i].filesize + ')'
-                                    			  + '<br>';
-                          }
-
-                        }
-
-                        document.getElementById("images_info").innerHTML = img_html_buttons ;
-                    }
-                };
-                xmlhttp.open("GET", url, true);
-                xmlhttp.send();
-
-            </script>
-
-
-  			</p>
-  		</div>
-  		<div class="one-third column">
-              <h4>Choose devices to write to:</h4>
-              <p>
-                  <div id="device_info"></div>
-                  <script>
-                      var xmlhttp = new XMLHttpRequest();
-                      var url = "http://" + "replacewithhostnamehere" + "/getDevices";
-
-                      xmlhttp.onreadystatechange = function() {
-                          if (this.readyState == 4 && this.status == 200) {
-                              // var myArr = JSON.parse(this.responseText);
-                              // create_images_buttons(myArr);
-
-                              // Have to parse it twice to get a Json Object
-                              var array = JSON.parse(JSON.parse(this.responseText))
-                              var device_html_buttons = ''
-
-                              if(array.length == 0){
-                                var device_html_buttons = 'No Devices Found'
-                              }
-                              else{
-                                for(var i=0; i<array.length;i++){
-                                  device_html_buttons += '<input type="checkbox" id="devices" name="devices" value="'
-                                                  + array[i].name
-                                                  + '">'
-                                                  + array[i].name
-                                                  + ' (' + array[i].size + ')'
-                                                  + '<br>';
                                 }
 
-                              }
-
-                              document.getElementById("device_info").innerHTML = device_html_buttons ;
-                          }
-                      };
-                      xmlhttp.open("GET", url, true);
-                      xmlhttp.send();
-
-                  </script>
+                                document.getElementById("images_info").innerHTML = img_html_buttons;
+                            }
+                        };
+                        xmlhttp.open("GET", url, true);
+                        xmlhttp.send();
+                    </script>
 
 
-              </p>
-          </div>
-  		<div class="one-third column">
-              <h4>Start writing to devices:</h4>
-              <p>
-                  <input type="submit" value="Write Image to Devices" />
-              </p>
+                </p>
+            </div>
+            <div class="one-third column">
+                <h4>Choose devices to write to:</h4>
+                <p>
+                    <!-- Call api to get data, break down the response, and generate form -->
+                    <div id="device_info"></div>
+                    <script>
+                        var xmlhttp = new XMLHttpRequest();
+                        
+                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                        var url = "http://" + "replacewithhostnamehere" + "/getDevices";
 
-        </div>
-      </form>
+                        xmlhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+
+                                // Have to parse it twice to get a Json Object
+                                var array = JSON.parse(JSON.parse(this.responseText))
+                                var device_html_buttons = ''
+
+                                if (array.length == 0) {
+                                    var device_html_buttons = 'No Devices Found'
+                                } else {
+                                    for (var i = 0; i < array.length; i++) {
+                                        device_html_buttons += '<input type="checkbox" id="devices" name="devices" value="' + array[i].name + '">' + array[i].name + ' (' + array[i].size + ')' + '<br>';
+                                    }
+
+                                }
+
+                                document.getElementById("device_info").innerHTML = device_html_buttons;
+                            }
+                        };
+                        xmlhttp.open("GET", url, true);
+                        xmlhttp.send();
+                    </script>
+
+
+                </p>
+            </div>
+            <div class="one-third column">
+                <h4>Start writing to devices:</h4>
+                <p>
+                    <input type="submit" value="Write Image to Devices" />
+                </p>
+
+            </div>
+        </form>
         <div class="sixteen columns">
             <hr />
             <h5>Released by <a href="http://www.rockandscissor.com/" target="_blank">Rock &amp; Scissor Enterprises Limited</a> under the <a href="license.txt">GNU GPLv3</a>.</h5>
             <h5>Heavily Modified by Aaron Nguyen under the <a href="license.txt">GNU GPLv3</a>.</h5>
         </div>
 
-	</div>
+    </div>
 
 </body>
+
 </html>
