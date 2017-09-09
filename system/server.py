@@ -25,6 +25,23 @@ class SDCardDupe(object):
 
         return html_string
 
+
+    @cherrypy.expose
+    def posted_sim(self):
+        # get host configs from server.ini
+        config_parse = configparser.ConfigParser()
+        config_parse.sections()
+        config_parse.read('server.ini')
+
+        # Get webpage, then replace needed parts here
+        html_string = open('../www/monitor.html', 'r').read()
+        html_string = html_string.replace("replacewithhostnamehere",config_parse['DuplicatorSettings']['Host'])
+
+        css_string = '<style>' + open(config_parse['DuplicatorSettings']['SkeletonLocation'], 'r').read() + '</style>'
+        html_string = html_string.replace("<style></style>",css_string)
+
+        return html_string
+
     @cherrypy.expose
     def posted(self,img_file,devices):
 
@@ -98,16 +115,15 @@ class SDCardDupe(object):
         if "records in" in cat_output and "records out" in cat_output and "osid_completed_task" in cat_output:
             percentage = "100%"
             time_remains = "00:00:00"
-        elif "%" in cat_output:
 
+        elif "%" in cat_output:
             current_line = cat_output.split("[")[-1]
             percentage = current_line.split(" of ")[0]
             time_remains = current_line.split("written. ")[1].split(" remaining.")[0]
 
-
         # send the data as a json
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return json.dumps({'percentage':percentage,'time_remaining':time_remains})
+        return json.dumps({'percentage':percentage.replace('%',''),'time_remaining':time_remains})
 
 
     @cherrypy.expose
