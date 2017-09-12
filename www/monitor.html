@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+
+<head>
+    <title>rPi-Dupe</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Description" content="Raspberry Pi SD Card Duplicator">
+
+    <style>
+        #progress_bar {
+            width: 0%;
+            height: 30px;
+            background-color: #1A4384;
+            text-align: center;
+            line-height: 30px;
+            color: #C7CFDB;
+        }
+    </style>
+
+    <script>
+        function move() {
+
+            var elem = document.getElementById("progress_bar");
+            var width = 0;
+            var id = setInterval(frame, 100);
+
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                } else {
+
+                    var xmlhttp = new XMLHttpRequest();
+                    // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                    var url = "http://" + "replacewithhostnamehere" + "/getStatus";
+
+                    // Call the api and get the status until complete.
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+
+                            // Have to parse it twice to get a Json Object
+                            var array = JSON.parse(JSON.parse(this.responseText))
+
+                            width = parseInt(array.percentage);
+                            elem.style.width = width + '%';
+                            elem.innerHTML = width * 1 + '%';
+
+                            if (width == 100) {
+                                completed_html = "Duplication Complete<br>"
+                                completed_html += "<a href=\"http://replacewithhostnamehere\">Return to Start</a>"
+                                document.getElementById("StatusMessage").innerHTML = completed_html
+                            } else {
+                                document.getElementById("StatusMessage").innerHTML = "Time Remaining: " + array.time_remaining
+                            }
+
+                        }
+                    };
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+
+
+
+                }
+            }
+        }
+    </script>
+
+    <!-- Leave style tags here, CherryPy will replace with Skeleton CSS Template Code -->
+    <style></style>
+
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="sixteen columns osid_icon">
+            <h8>Open Source Image Duplicator v1.0.0.py</h8>
+            <hr />
+        </div>
+        <div class="sixteen columns">
+            <h4 align="center">Progress<h4>
+            <div id="progress_bg">
+                <div id="progress_display">
+                    <div id="progress_bar">0%</div><div id="unprogress_bar"></div>
+                    <p id="StatusMessage" align="center">
+                        Connecting to image write sub-system...
+                    </p>
+                </div>
+            </div>
+            <script type="text/javascript">
+            move();
+            </script>
+
+        </div>
+
+
+        <div class="sixteen columns">
+            <hr />
+            <h10>Released by <a href="http://www.rockandscissor.com/" target="_blank">Rock &amp; Scissor Enterprises Limited</a> and heavily modified by <a href="https://github.com/aaronnguyen" target="_blank">Aaron Nguyen</a> under the <a href="license.txt">GNU GPLv3</a>.</h10>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
