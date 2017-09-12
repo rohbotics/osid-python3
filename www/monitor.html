@@ -46,7 +46,14 @@
                             elem.style.width = width + '%';
                             elem.innerHTML = width * 1 + '%';
 
-                            document.getElementById("StatusMessage").innerHTML = "Time Remaining: " + array.time_remaining
+                            if (width == 100) {
+                                completed_html = "Duplication Complete<br>"
+                                completed_html += "<a href=\"http://replacewithhostnamehere\">Return to Start</a>"
+                                document.getElementById("StatusMessage").innerHTML = completed_html
+                            } else {
+                                document.getElementById("StatusMessage").innerHTML = "Time Remaining: " + array.time_remaining
+                            }
+
                         }
                     };
                     xmlhttp.open("GET", url, true);
@@ -69,7 +76,7 @@
 
     <div class="container">
         <div class="sixteen columns osid_icon">
-            <h8>Open Source Image Duplicator v0.1.py</h8>
+            <h8>Open Source Image Duplicator v1.0.0.py</h8>
             <hr />
         </div>
         <div class="sixteen columns">
@@ -91,7 +98,7 @@
 
         <div class="sixteen columns">
             <hr />
-            <h10>Released by <a href="http://www.rockandscissor.com/" target="_blank">Rock &amp; Scissor Enterprises Limited</a> and heavily modified by Aaron Nguyen under the <a href="license.txt">GNU GPLv3</a>.</h10>
+            <h10>Released by <a href="http://www.rockandscissor.com/" target="_blank">Rock &amp; Scissor Enterprises Limited</a> and heavily modified by <a href="https://github.com/aaronnguyen" target="_blank">Aaron Nguyen</a> under the <a href="license.txt">GNU GPLv3</a>.</h10>
         </div>
 
     </div>
