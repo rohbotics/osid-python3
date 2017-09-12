@@ -1,9 +1,11 @@
+# Standard Libs
 import json
 import os
 import subprocess
 import configparser
-
+# Installed Libs
 import cherrypy
+
 
 # Todo: too many config_parse blocks, create a function to easily call it
 
@@ -14,11 +16,14 @@ class SDCardDupe(object):
         # get host configs from server.ini
         config_parse = configparser.ConfigParser()
         config_parse.sections()
-        config_parse.read('server.ini')
+        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
+
 
         # Get webpage, then replace needed parts here
-        html_string = open('../www/index.html', 'r').read()
-        html_string = html_string.replace("replacewithhostnamehere",config_parse['DuplicatorSettings']['Host'])
+        www_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/")[:-1]) + "/www/"
+        html_string = open(www_path + 'index.html', 'r').read()
+        hostname_port = config_parse['DuplicatorSettings']['Host']+":"+config_parse['DuplicatorSettings']['SocketPort']
+        html_string = html_string.replace("replacewithhostnamehere",hostname_port)
 
         css_string = '<style>' + open(config_parse['DuplicatorSettings']['SkeletonLocation'], 'r').read() + '</style>'
         html_string = html_string.replace("<style></style>",css_string)
@@ -27,15 +32,18 @@ class SDCardDupe(object):
 
 
     @cherrypy.expose
-    def posted_sim(self):
+    def monitor(self):
+
         # get host configs from server.ini
         config_parse = configparser.ConfigParser()
         config_parse.sections()
-        config_parse.read('server.ini')
+        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
 
         # Get webpage, then replace needed parts here
-        html_string = open('../www/monitor.html', 'r').read()
-        html_string = html_string.replace("replacewithhostnamehere",config_parse['DuplicatorSettings']['Host'])
+        www_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/")[:-1]) + "/www/"
+        html_string = open(www_path + 'monitor.html', 'r').read()
+        hostname_port = config_parse['DuplicatorSettings']['Host']+":"+config_parse['DuplicatorSettings']['SocketPort']
+        html_string = html_string.replace("replacewithhostnamehere",hostname_port)
 
         css_string = '<style>' + open(config_parse['DuplicatorSettings']['SkeletonLocation'], 'r').read() + '</style>'
         html_string = html_string.replace("<style></style>",css_string)
@@ -73,7 +81,7 @@ class SDCardDupe(object):
         # get host configs from server.ini
         config_parse = configparser.ConfigParser()
         config_parse.sections()
-        config_parse.read('server.ini')
+        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
 
         if not os.path.exists(config_parse['DuplicatorSettings']['Logs']):
             os.makedirs(config_parse['DuplicatorSettings']['Logs'])
@@ -95,9 +103,15 @@ class SDCardDupe(object):
 
         subprocess.Popen(['sudo', 'bash', dd_cmd_file], close_fds=True)
 
-        html_string = "Javascript to redirect to monitor here"
+        hostname_port = config_parse['DuplicatorSettings']['Host']+":"+config_parse['DuplicatorSettings']['SocketPort']
+        monitor_url = "http://" +  hostname_port + "/monitor";
 
-        return dd_cmd
+
+        html_string = "<html><head>"
+        html_string += "<meta http-equiv=\"refresh\" content=\"0; URL='" +monitor_url+ "'\" />"
+        html_string += "</head></html>"
+
+        return html_string
 
 
 
@@ -107,9 +121,10 @@ class SDCardDupe(object):
         # get host configs from server.ini
         config_parse = configparser.ConfigParser()
         config_parse.sections()
-        config_parse.read('server.ini')
+        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
         progress_file = config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
 
+        # pull data from progress.info file and feed back to call
         cat_cmd = "sudo cat "+ progress_file
         cat_output = str(subprocess.check_output(cat_cmd, shell=True).decode("utf-8"))
         if "records in" in cat_output and "records out" in cat_output and "osid_completed_task" in cat_output:
@@ -162,7 +177,7 @@ class SDCardDupe(object):
         # get the path of images from the ini file
         config_parse = configparser.ConfigParser()
         config_parse.sections()
-        config_parse.read('server.ini')
+        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
 
         # get the list of images and check if valid img file
         for img_file in os.listdir(config_parse['DuplicatorSettings']['ImagePath']):
@@ -189,19 +204,22 @@ class SDCardDupe(object):
 if __name__ == '__main__':
 
     # get host configs from server.ini
+    # note: is there a way to put the config into conf and pull from api functions
     config_parse = configparser.ConfigParser()
     config_parse.sections()
-    config_parse.read('server.ini')
+    config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
 
     conf = {
         'global':{
-            # 'tools.json_in.on': True,
-            # 'tools.json_in.force': False,
             'server.socket_host': config_parse['DuplicatorSettings']['Host'],
-            'server.socket_port': int(config_parse['DuplicatorSettings']['SocketPort'])
+            'server.socket_port': int(config_parse['DuplicatorSettings']['SocketPort']),
+            'log.access_file' : config_parse['DuplicatorSettings']['Logs']+"/access.log",
+            'log.screen': False,
+            'tools.sessions.on': True
         }
     }
 
-
+    # create a daemon for cherrpy so it will create a thread when started
+    cherrypy.process.plugins.Daemonizer(cherrypy.engine).subscribe()
 
     cherrypy.quickstart(SDCardDupe(), '/', conf)
