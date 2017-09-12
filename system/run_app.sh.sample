@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+cd /path_to/py-rpi-dupe/system
+sudo /usr/bin/python3 server.py
+
+# Allow Cherrypy to boot up
+sleep 5
+chromium-browser --app=http://hostname:port

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=rPi SD Card Duplicator
+Comment=Desktop entry open browser as app.
+Icon=/usr/share/pixmaps/openbox.xpm
+Exec=bash /home/pi/Documents/py-rpi-dupe/system/run_app.sh
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;
