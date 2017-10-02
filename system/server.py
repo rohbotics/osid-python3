@@ -61,6 +61,11 @@ class SDCardDupe(object):
             if device_name not in mounted_list:
                 mounted_list.append(device_name)
 
+        # If one device has been posted, a string is passed into function
+        # Need to convert to a list
+        if type(devices) is str:
+            devices = [devices]
+
         # nested for loop, maybe we can optimize this later
         for dev_path in devices:
 
