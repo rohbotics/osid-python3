@@ -36,6 +36,13 @@
             }
 
         }
+
+        function select_all(source) {
+            checkboxes = document.getElementsByName('devices');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
     </script>
 
     <!-- Leave style tags here, CherryPy will replace with Skeleton CSS Template Code -->
@@ -48,7 +55,7 @@
 
     <div class="container">
         <div class="sixteen columns osid_icon">
-            <h8>Open Source Image Duplicator v1.0.0.py</h8>
+            <h8>Open Source Image Duplicator - Python v1.1.1</h8>
             <hr />
         </div>
         <div class="sixteen columns">
@@ -114,6 +121,7 @@
                                 if (array.length == 0) {
                                     var device_html_buttons = 'No Devices Found'
                                 } else {
+                                    device_html_buttons += "<input type=\"checkbox\" onClick=\"select_all(this)\" /> Select All Devices<br/>"
                                     for (var i = 0; i < array.length; i++) {
                                         device_html_buttons += '<input type="checkbox" id="devices" name="devices" value="' + array[i].name + '">' + array[i].name + ' (' + array[i].size + ')' + '<br>';
                                     }
