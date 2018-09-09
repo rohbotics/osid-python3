@@ -36,13 +36,6 @@
             }
 
         }
-
-        function select_all(source) {
-            checkboxes = document.getElementsByName('devices');
-            for (var i = 0, n = checkboxes.length; i < n; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-        }
     </script>
 
     <!-- Leave style tags here, CherryPy will replace with Skeleton CSS Template Code -->
@@ -79,20 +72,20 @@
 
                                     // Have to parse it twice to get a Json Object
                                     var array = JSON.parse(JSON.parse(this.responseText))
-                                    var device_html_buttons = ''
+                                    var devices_html = ''
 
                                     if (array.length == 0) {
-                                        var device_html_buttons = 'No Devices Found'
+                                        var devices_html = 'No Devices Found'
                                     } else {
-                                        device_html_buttons += "<h1>" + array.length + "</h1>"
-                                        device_html_buttons += "<input hidden type=\"checkbox\" onClick=\"select_all(this)\" checked/> Select All Devices (" + array.length + ") <br/>"
+                                        devices_html += '<h1 style="text-align: center;">' + array.length + '</h1>'
+                                        devices_html += '<div style="display: none;">'
                                         for (var i = 0; i < array.length; i++) {
-                                            device_html_buttons += '<input hidden type="checkbox" id="devices" name="devices" value="' + array[i].name + '" checked>' + array[i].name + ' (' + array[i].size + ')' + ' <br>';
+                                            devices_html += '<input hidden type="checkbox" id="devices" name="devices" value="' + array[i].name + '" checked>' + array[i].name + ' (' + array[i].size + ')' + ' <br>';
                                         }
-
+                                        devices_html += '</div>'
                                     }
 
-                                    document.getElementById("device_info").innerHTML = device_html_buttons;
+                                    document.getElementById("device_info").innerHTML = devices_html;
                                     setTimeout(load_devices, 1000); // run again in 1000ms
                                 }
                             };

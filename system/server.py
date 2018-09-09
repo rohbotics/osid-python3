@@ -188,39 +188,6 @@ class SDCardDupe(object):
         return json.dumps(list_devices)
 
 
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def getImages(self):
-
-        list_images = []
-
-        # get the path of images from the ini file
-        config_parse = configparser.ConfigParser()
-        config_parse.sections()
-        config_parse.read( os.path.dirname(os.path.realpath(__file__)) + '/server.ini' )
-
-        # get the list of images and check if valid img file
-        for img_file in os.listdir(config_parse['DuplicatorSettings']['ImagePath']):
-            img_fullpath = os.path.join(config_parse['DuplicatorSettings']['ImagePath'], img_file)
-            if os.path.isfile(img_fullpath) and  os.path.splitext(img_file)[1] == '.img':
-
-                # get the size of the image
-                img_filesize_cmd = "ls -sh " + img_fullpath
-                img_size_cmd_output = subprocess.check_output(img_filesize_cmd, shell=True).decode("utf-8").rstrip("\n")
-
-                # output is "Size Filename"
-                # img_size_gb = round(((int(img_size_cmd_output.split(' ')[0]) / 2) / 1024) / 1024, 2);
-                img_size_gb = img_size_cmd_output.split(' ')[0]
-
-                # prep the data to send
-                list_images.append({'filename': img_file, 'fullpath': img_fullpath, 'filesize': img_size_gb})
-
-        # send the data as a json
-        cherrypy.response.headers['Content-Type'] = 'application/json'
-        return json.dumps(list_images)
-
-
-
 if __name__ == '__main__':
 
     # get host configs from server.ini
