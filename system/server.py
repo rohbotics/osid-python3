@@ -197,15 +197,15 @@ class SDCardDupe(object):
 
         state_string += "Wifi:"
         if internet == 0:
-            state_string += "Connected"
+            state_string += "Up"
         else:
-            state_string += "Not Connected"
+            state_string += "Down"
 
         state_string += "   Garage:"
         if garage == 0:
-            state_string += "Connected"
+            state_string += "Up"
         else:
-            state_string += "Not Connected"
+            state_string += "Down"
         return state_string
 
 
