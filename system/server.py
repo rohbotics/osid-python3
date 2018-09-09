@@ -51,7 +51,9 @@ class SDCardDupe(object):
         return html_string
 
     @cherrypy.expose
-    def posted(self,img_file,devices):
+    def posted(self,devices):
+
+        img_file = config_parse['DuplicatorSettings']['ImagePath']
 
         # get all mounted items on the rpi
         mounted_list = []

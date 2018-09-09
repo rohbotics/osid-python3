@@ -62,45 +62,7 @@
         </div>
 
         <form id="posted" name="posted" method="POST" action="/posted" onsubmit="return validateForm()">
-
-            <div class="one-third column">
-
-                <h6>Select an image:</h6>
-                <p>
-                    <!-- Call api to get data, break down the response, and generate form -->
-                    <div id="images_info"></div>
-                    <script>
-                        var xmlhttp = new XMLHttpRequest();
-                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
-                        var url = "http://" + "replacewithhostnamehere" + "/getImages";
-
-                        xmlhttp.onreadystatechange = function() {
-                            if (this.readyState == 4 && this.status == 200) {
-
-                                // Have to parse it twice to get a Json Object
-                                var array = JSON.parse(JSON.parse(this.responseText))
-                                var img_html_buttons = ''
-
-                                if (array.length == 0) {
-                                    var img_html_buttons = 'No Images Found'
-                                } else {
-                                    for (var i = 0; i < array.length; i++) {
-                                        img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
-                                    }
-
-                                }
-
-                                document.getElementById("images_info").innerHTML = img_html_buttons;
-                            }
-                        };
-                        xmlhttp.open("GET", url, true);
-                        xmlhttp.send();
-                    </script>
-
-
-                </p>
-            </div>
-            <div class="one-third column">
+            <div class="one-half column">
                 <h6>Choose devices to write to:</h6>
                 <p>
                     <!-- Call api to get data, break down the response, and generate form -->
@@ -143,7 +105,7 @@
 
                 </p>
             </div>
-            <div class="one-third column">
+            <div class="one-half column">
                 <h6>Start writing to devices:</h6>
                 <p>
                     <input type="submit" value="Write Image to Devices" />
