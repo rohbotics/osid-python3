@@ -70,34 +70,31 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="images_info"></div>
                     <script>
-                        setInterval(load_images, 2000); // Run every 2000ms
-                        function load_images() {
-                            var xmlhttp = new XMLHttpRequest();
-                            // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
-                            var url = "http://" + "replacewithhostnamehere" + "/getImages";
+                        var xmlhttp = new XMLHttpRequest();
+                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                        var url = "http://" + "replacewithhostnamehere" + "/getImages";
 
-                            xmlhttp.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
+                        xmlhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
 
-                                    // Have to parse it twice to get a Json Object
-                                    var array = JSON.parse(JSON.parse(this.responseText))
-                                    var img_html_buttons = ''
+                                // Have to parse it twice to get a Json Object
+                                var array = JSON.parse(JSON.parse(this.responseText))
+                                var img_html_buttons = ''
 
-                                    if (array.length == 0) {
-                                        var img_html_buttons = 'No Images Found'
-                                    } else {
-                                        for (var i = 0; i < array.length; i++) {
-                                            img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
-                                        }
-
+                                if (array.length == 0) {
+                                    var img_html_buttons = 'No Images Found'
+                                } else {
+                                    for (var i = 0; i < array.length; i++) {
+                                        img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
                                     }
 
-                                    document.getElementById("images_info").innerHTML = img_html_buttons;
                                 }
-                            };
-                            xmlhttp.open("GET", url, true);
-                            xmlhttp.send();
-                        }
+
+                                document.getElementById("images_info").innerHTML = img_html_buttons;
+                            }
+                        };
+                        xmlhttp.open("GET", url, true);
+                        xmlhttp.send();
                     </script>
 
 
