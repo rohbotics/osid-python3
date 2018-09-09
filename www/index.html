@@ -121,7 +121,7 @@
 
                     xmlhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            document.getElementById("network_info").innerHTML = "<p>" + this.responseText + "</p>";
+                            document.getElementById("network_info").innerHTML = "<p>" + JSON.parse(this.responseText); + "</p>";
                             setTimeout(net_status, 427); // run again in 427ms
                         }
                     };
