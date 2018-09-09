@@ -187,6 +187,28 @@ class SDCardDupe(object):
         # return json.dumps(dict(Devices=list_devices))
         return json.dumps(list_devices)
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def getNetwork(self):
+        internet = subprocess.call(["/usr/bin/timeout", "1", "ping", "-c", "1", "baidu.com"])
+        garage = subprocess.call(["/usr/bin/timeout", "1", "ping", "-c", "1", "10.8.0.1"])
+
+        state_string = ""
+
+        state_string += "Wifi:"
+        if internet == 0:
+            state_string += "Connected"
+        else:
+            state_string += "Not Connected"
+
+        state_string += "   Garage:"
+        if garage == 0:
+            state_string += "Connected"
+        else:
+            state_string += "Not Connected"
+        return state_string
+
+
 
 if __name__ == '__main__':
 

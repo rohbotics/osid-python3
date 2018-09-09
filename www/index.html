@@ -111,8 +111,25 @@
         </div>
         <div class="sixteen columns">
             <hr />
-            <p>Wifi: Connected</p> <!-- TODO: actually check -->
-            <p>Garage: Connected</p> <!-- TODO: actually check -->
+            <div id="network_info">></div>
+            <script>
+                function net_status() {
+                    var xmlhttp = new XMLHttpRequest();
+
+                    // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                    var url = "http://" + "replacewithhostnamehere" + "/getNetwork";
+
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            document.getElementById("device_info").innerHTML = "<p>" + this.responseText "</p>";
+                            setTimeout(net_status, 427); // run again in 427ms
+                        }
+                    };
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+                }
+                net_status();
+            </script>
         </div>
 
     </div>
