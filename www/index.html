@@ -109,7 +109,7 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="device_info"></div>
                     <script>
-                        function load_devices(){
+                        function load_devices() {
                             var xmlhttp = new XMLHttpRequest();
 
                             // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
@@ -139,6 +139,7 @@
                             xmlhttp.send();
                             setTimeout(load_devices, 100); // run again in 100ms
                         }
+                        load_devices();
                     </script>
 
 
