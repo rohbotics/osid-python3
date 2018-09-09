@@ -70,31 +70,34 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="images_info"></div>
                     <script>
-                        var xmlhttp = new XMLHttpRequest();
-                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
-                        var url = "http://" + "replacewithhostnamehere" + "/getImages";
+                        setInterval(load_images, 100); // Run every 100ms
+                        function load_images() {
+                            var xmlhttp = new XMLHttpRequest();
+                            // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                            var url = "http://" + "replacewithhostnamehere" + "/getImages";
 
-                        xmlhttp.onreadystatechange = function() {
-                            if (this.readyState == 4 && this.status == 200) {
+                            xmlhttp.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
 
-                                // Have to parse it twice to get a Json Object
-                                var array = JSON.parse(JSON.parse(this.responseText))
-                                var img_html_buttons = ''
+                                    // Have to parse it twice to get a Json Object
+                                    var array = JSON.parse(JSON.parse(this.responseText))
+                                    var img_html_buttons = ''
 
-                                if (array.length == 0) {
-                                    var img_html_buttons = 'No Images Found'
-                                } else {
-                                    for (var i = 0; i < array.length; i++) {
-                                        img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
+                                    if (array.length == 0) {
+                                        var img_html_buttons = 'No Images Found'
+                                    } else {
+                                        for (var i = 0; i < array.length; i++) {
+                                            img_html_buttons += '<input type="radio" id="img_file" name="img_file" value="' + array[i].fullpath + '">' + array[i].filename + ' (' + array[i].filesize + ')' + '<br>';
+                                        }
+
                                     }
 
+                                    document.getElementById("images_info").innerHTML = img_html_buttons;
                                 }
-
-                                document.getElementById("images_info").innerHTML = img_html_buttons;
-                            }
-                        };
-                        xmlhttp.open("GET", url, true);
-                        xmlhttp.send();
+                            };
+                            xmlhttp.open("GET", url, true);
+                            xmlhttp.send();
+                        }
                     </script>
 
 
@@ -106,33 +109,36 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="device_info"></div>
                     <script>
-                        var xmlhttp = new XMLHttpRequest();
+                        setInterval(load_images, 100); // Run every 100ms
+                        function load_images(){
+                            var xmlhttp = new XMLHttpRequest();
 
-                        // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
-                        var url = "http://" + "replacewithhostnamehere" + "/getDevices";
+                            // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
+                            var url = "http://" + "replacewithhostnamehere" + "/getDevices";
 
-                        xmlhttp.onreadystatechange = function() {
-                            if (this.readyState == 4 && this.status == 200) {
+                            xmlhttp.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
 
-                                // Have to parse it twice to get a Json Object
-                                var array = JSON.parse(JSON.parse(this.responseText))
-                                var device_html_buttons = ''
+                                    // Have to parse it twice to get a Json Object
+                                    var array = JSON.parse(JSON.parse(this.responseText))
+                                    var device_html_buttons = ''
 
-                                if (array.length == 0) {
-                                    var device_html_buttons = 'No Devices Found'
-                                } else {
-                                    device_html_buttons += "<input type=\"checkbox\" onClick=\"select_all(this)\" checked/> Select All Devices (" + array.length + ") <br/>"
-                                    for (var i = 0; i < array.length; i++) {
-                                        device_html_buttons += '<input type="checkbox" id="devices" name="devices" value="' + array[i].name + '" checked>' + array[i].name + ' (' + array[i].size + ')' + ' <br>';
+                                    if (array.length == 0) {
+                                        var device_html_buttons = 'No Devices Found'
+                                    } else {
+                                        device_html_buttons += "<input type=\"checkbox\" onClick=\"select_all(this)\" checked/> Select All Devices (" + array.length + ") <br/>"
+                                        for (var i = 0; i < array.length; i++) {
+                                            device_html_buttons += '<input type="checkbox" id="devices" name="devices" value="' + array[i].name + '" checked>' + array[i].name + ' (' + array[i].size + ')' + ' <br>';
+                                        }
+
                                     }
 
+                                    document.getElementById("device_info").innerHTML = device_html_buttons;
                                 }
-
-                                document.getElementById("device_info").innerHTML = device_html_buttons;
-                            }
-                        };
-                        xmlhttp.open("GET", url, true);
-                        xmlhttp.send();
+                            };
+                            xmlhttp.open("GET", url, true);
+                            xmlhttp.send();
+                        }
                     </script>
 
 
