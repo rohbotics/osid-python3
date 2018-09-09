@@ -70,7 +70,7 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="images_info"></div>
                     <script>
-                        setInterval(load_images, 100); // Run every 100ms
+                        setInterval(load_images, 2000); // Run every 2000ms
                         function load_images() {
                             var xmlhttp = new XMLHttpRequest();
                             // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
@@ -109,8 +109,7 @@
                     <!-- Call api to get data, break down the response, and generate form -->
                     <div id="device_info"></div>
                     <script>
-                        setInterval(load_images, 100); // Run every 100ms
-                        function load_images(){
+                        function load_devices(){
                             var xmlhttp = new XMLHttpRequest();
 
                             // URL replacewithhostnamehere will be changed based on configuration file by CherryPy Server
@@ -138,6 +137,7 @@
                             };
                             xmlhttp.open("GET", url, true);
                             xmlhttp.send();
+                            setTimeout(load_devices, 100); // run again in 100ms
                         }
                     </script>
 
