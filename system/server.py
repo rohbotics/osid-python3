@@ -200,11 +200,15 @@ if __name__ == '__main__':
         'global':{
             'server.socket_host': config_parse['DuplicatorSettings']['Host'],
             'server.socket_port': int(config_parse['DuplicatorSettings']['SocketPort']),
-            'log.access_file' : config_parse['DuplicatorSettings']['Logs']+"/access.log",
+            'log.access_file' : None,
             'log.screen': False,
             'tools.sessions.on': True
         }
     }
+
+    # Stop logging
+    cherrypy.log.error_log.propagate = False
+    cherrypy.log.access_log.propagate = False
 
     # create a daemon for cherrpy so it will create a thread when started
     cherrypy.process.plugins.Daemonizer(cherrypy.engine).subscribe()
