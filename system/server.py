@@ -98,7 +98,7 @@ class SDCardDupe(object):
         out.close()
 
         # Run dd command and output status into the progress.info file
-        dd_cmd = "sudo dcfldd conv=sparse bs=4M if=" + img_file
+        dd_cmd = "sudo dcfldd bs=4M if=" + img_file
         dd_cmd += " of=" + " of=".join(devices)
         dd_cmd += " sizeprobe=if statusinterval=1 2>&1 | sudo tee "
         dd_cmd += config_parse['DuplicatorSettings']['Logs'] + "/progress.info"
