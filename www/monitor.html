@@ -12,10 +12,15 @@
         #progress_bar {
             width: 0%;
             height: 30px;
-            background-color: #1A4384;
             text-align: center;
             line-height: 30px;
             color: #C7CFDB;
+        }
+        .in-progress {
+            background-color: #1A4384;
+        }
+        .done {
+            background-color: #00BB05;
         }
     </style>
 
@@ -39,6 +44,7 @@
                     xmlhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
 
+
                             // Have to parse it twice to get a Json Object
                             var array = JSON.parse(JSON.parse(this.responseText))
 
@@ -47,11 +53,12 @@
                             elem.innerHTML = width * 1 + '%';
 
                             if (width == 100) {
-                                elem.style.backgroundColor = '#00BB05';
+                                elem.className = "done";
                                 completed_html = "Done! <br>"
                                 completed_html += "<a href=\"http://replacewithhostnamehere\">Return to Start</a>"
                                 document.getElementById("StatusMessage").innerHTML = completed_html
                             } else {
+                                elem.className = "in-progress";
                                 document.getElementById("StatusMessage").innerHTML = "Time Remaining: " + array.time_remaining
                             }
 
