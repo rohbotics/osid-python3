@@ -44,10 +44,10 @@
 
                             width = parseInt(array.percentage);
                             elem.style.width = width + '%';
-                            elem.style.backgroundColor = '#00BB05';
                             elem.innerHTML = width * 1 + '%';
 
                             if (width == 100) {
+                                elem.style.backgroundColor = '#00BB05';
                                 completed_html = "Done! <br>"
                                 completed_html += "<a href=\"http://replacewithhostnamehere\">Return to Start</a>"
                                 document.getElementById("StatusMessage").innerHTML = completed_html
